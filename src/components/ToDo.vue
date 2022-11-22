@@ -12,12 +12,14 @@
     @close="closePopup"
   />
   <div class="container-fluid">
-    <div class="card">
+    <div class="card bg-primary">
       <div
         class="card-header d-flex justify-content-between align-items-center"
       >
         <div class="col-sm-11">
-          <h5 class="text-center">FRAMEWORKS</h5>
+          <h5 class="text-center" style="color: white">
+            <i class="fa-solid fa-bars"></i> FRAMEWORKS
+          </h5>
         </div>
         <div class="col-sm-1">
           <button

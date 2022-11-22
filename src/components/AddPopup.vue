@@ -20,11 +20,17 @@
           <form>
           <div class="form-group" v-if= "isAddTask">
           <label for = "title" class="ms-2 position-absolute" style="margin-top: -0.60rem"> <span class="h7 small bg-white text-muted px-1">Title</span></label>
-          <input type="text" class="form-control mt-3" id="title" ref="title" v-model = "title" placeholder = "Title"> </input>
+          <input type="text" class="form-control mt-3" id="title" ref="title" v-model = "v$.title.$model" placeholder = "Title"> </input>
+            <div class="input-errors" v-for="(error, index) of v$.description.$errors" :key="index">
+              <div style="color:red; font-size:12px" class="error-msg">{{ error.$message }}</div>
+            </div>
           </div>
           <div class = "form-group">
           <label for = "description" class="ms-2 position-absolute" style="margin-top: -0.60rem"> <span class="h7 small bg-white text-muted px-1">Description</span></label>
-          <input type="text" class="form-control mt-3" id="description" placeholder = "Description" v-model= "description"></input>
+          <input type="text" class="form-control mt-3" id="description" placeholder = "Description" v-model= "v$.description.$model"></input>
+            <div class="input-errors" v-for="(error, index) of v$.description.$errors" :key="index">
+              <div style="color:red; font-size:12px" class="error-msg">{{ error.$message }}</div>
+            </div>
           </div>
           <div class = "form-group">
           <label for = "deadline" class="ms-2 position-absolute" style="margin-top: -0.60rem"> <span class="h7 small bg-white text-muted px-1">Deadline</span></label>
@@ -47,7 +53,7 @@
           <footer class="modal-footer">
             <div v-if = "isAddTask" key = "addButton">
               <button type="button" class="btn btn-block btn-primary" @click="submitTask">
-              <span class="fa-solid fa-circle-plus"></span> Add
+              <span class="fa-solid fa-circle-plus" ></span> Add
               </button>
               <button type="button" class="btn btn-block btn-danger" @click="close">
               <span class="fa-solid fa-circle-xmark"></span> Cancel
@@ -144,7 +150,7 @@
 
 <script>
 import useVuelidate from '@vuelidate/core';
-import { required, sameAs } from '@vuelidate/validators';
+import { required } from '@vuelidate/validators';
 
 export default {
   name: 'AddPopup',
@@ -197,7 +203,7 @@ export default {
       description: '',
       priority:'',
       deadline: '',
-      priority:'low',
+      priority:'',
       date: '',
     }
   },
