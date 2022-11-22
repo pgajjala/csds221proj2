@@ -55,13 +55,18 @@
               <span>{{ task.priority }}</span>
             </td>
             <td align="center">
-              <label class="container">
-                <input type="checkbox" v-model="tasks[index].isComplete" />
-                <span class="checkmark"></span
-              ></label>
+              <input
+                type="checkbox"
+                v-model="tasks[index].isComplete"
+                @click="tasks[index].isComplete = !tasks[index].isComplete"
+              />
             </td>
             <td>
-              <div class="text-center" @click="showEditModal">
+              <div
+                v-if="!tasks[index].isComplete"
+                class="text-center"
+                @click="showEditModal"
+              >
                 <button class="btn btn-primary btn-sm w-50">
                   <span class="fa fa-pen-to-square"></span>
                   Update
@@ -101,7 +106,6 @@ export default {
       description: '',
       deadline: '',
       priority: '',
-      is_complete: false,
       availablePriorities: ['Low', 'Med', 'High'],
       tasks: [],
     };
@@ -115,9 +119,11 @@ export default {
         priority: priority,
         is_complete: false,
       });
+      this.$toast.success('Task successfully added');
     },
     deleteTask(index) {
       this.tasks.splice(index, 1);
+      this.$toast.error('Task successfully deleted');
     },
     editTask(index) {
       this.task = this.tasks[index].title;

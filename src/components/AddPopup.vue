@@ -12,19 +12,19 @@
           </div>
           <section class="modal-body">
           <form>
-          <div class="form-group" lazy-validation>
+          <div class="form-group">
           <label for = "title" class="ms-2 position-absolute" style="margin-top: -0.60rem"> <span class="h7 small bg-white text-muted px-1">Title</span></label>
-          <input type="text" class="form-control mt-3" id="title" v-model = "title" placeholder = "Title"> </input>
+          <input type="text" class="form-control mt-3" id="title" ref="title" v-model = "title" placeholder = "Title"> </input>
           </div>
-          <div class = "form-group" lazy-validation>
+          <div class = "form-group">
           <label for = "description" class="ms-2 position-absolute" style="margin-top: -0.60rem"> <span class="h7 small bg-white text-muted px-1">Description</span></label>
-          <input type="text" class="form-control mt-3" id="description" placeholder = "Description" v-model= "description"></input>
+          <input type="text" class="form-control mt-3" id="description" placeholder = "Description" v-model= "v$.description.$model"></input>
           </div>
-          <div class = "form-group" lazy-validation>
+          <div class = "form-group">
           <label for = "deadline" class="ms-2 position-absolute" style="margin-top: -0.60rem"> <span class="h7 small bg-white text-muted px-1">Deadline</span></label>
           <input type = "date" class = "form-control mt-3" id ="deadline" v-model = "deadline">
           </div>
-          <div class = "form-group" lazy-validation>
+          <div class = "form-group">
             <div>Priority: {{priority}} </div>
             <input type="radio" name="priority" id="low" value = "Low" v-model = "priority" />
             <label for="low" class = "radio"> Low </label>
@@ -39,13 +39,13 @@
           </section>
 
           <footer class="modal-footer">
-          <div>
-            <button type="button" class="btn btn-primary" @click="submitTask">
-              <span class="fa-solid fa-circle-plus"></span> Add
-            </button>
-            <button type="button" class="btn btn-danger" @click="close">
-              <span class="fa-solid fa-circle-xmark"></span> Cancel
-            </button>
+            <div>
+              <button type="button" class="btn btn-primary" @click="submitTask">
+                <span class="fa-solid fa-circle-plus"></span> Add
+              </button>
+              <button type="button" class="btn btn-danger" @click="close">
+                <span class="fa-solid fa-circle-xmark"></span> Cancel
+              </button>
             </div>
           </footer>
         </div>
@@ -122,24 +122,29 @@
   border: 1px solid #4aae9b;
   border-radius: 2px;
 }
+
+.has-error {
+    border: 1px solid red;
+}
 </style>
 
 <script>
+import useVuelidate from '@vuelidate/core';
+import { required, sameAs } from '@vuelidate/validators';
+
 export default {
   name: 'AddPopup',
   props: {
     isAddModalVisible: Boolean,
-    existing_description: String,
-    existing_deadline: String,
-    existing_priority: String,
     tasks: Array
   },
   methods: {
     submitTask(title, description, deadline, priority){
       const[year, month, day] = this.deadline.split('-');
+        
       this.$emit('submitTask',this.title, this.description, `${month}/${day}/${year}`, this.priority);
       this.clear();
-      this.close();
+      this.close();      
     },
     close() {
       this.$emit('close');
@@ -151,10 +156,18 @@ export default {
       this.priority = 'low';
     },
     checkValidTitle(title){
-      return !this.tasks.filter(e => e.title === title).length > 0
+      this.tasks.forEach(task => {
+        if(task.title === this.title) {
+          return false;
+        }
+      });
+      return true;
     }
   },
-  data(){
+  setup () {
+    return { v$: useVuelidate() }
+  },
+  data() {
     return {
       title: '',
       description: '',
@@ -162,10 +175,20 @@ export default {
       deadline: '',
       priority:'low',
       date: '',
-      titleRules: [
-        v=> !!v || 'Title is required',
-        v => this.checkValidTitle(v) || 'Title cannot repeat',
-      ],
+    }
+  },
+  validations() {
+    return {
+      title: {
+        required, title_validation: {
+            $message: 'Invalid Name. Valid name only contain letters, dashes (-) and spaces'
+          } 
+      },
+      description: {
+        required, description_validation: {
+            $message: 'Invalid Name. Valid name only contain letters, dashes (-) and spaces'
+          } 
+      }
     }
   }
 };
