@@ -151,6 +151,9 @@ export default {
   props: {
     isModalVisible: Boolean,
     isAddTask: Boolean,
+    existing_description: String,
+    existing_deadline: String,
+    existing_priority: String,
     tasks: Array
   },
   methods: {

@@ -136,7 +136,7 @@ export default {
       this.tasks.splice(index, 1);
       this.$toast.error('Task successfully deleted');
     },
-    editTask(index) {
+    editTask(description, deadline, priority) {
       this.tasks[this.taskIndex].description = description;
       this.tasks[this.taskIndex].deadline = deadline;
       this.tasks[this.taskIndex].priority = priority;
