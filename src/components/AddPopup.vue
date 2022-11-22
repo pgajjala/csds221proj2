@@ -164,13 +164,15 @@ export default {
   },
   methods: {
     submitTask(title, description, deadline, priority){
+      this.tasks2 = this.tasks;
       this.v$.$validate()
       if(!this.v$.$error) {
         const[year, month, day] = this.deadline.split('-');
         this.$emit('submitTask',this.title, this.description, `${month}/${day}/${year}`, this.priority);
         this.clear();
         this.close(); 
-      } 
+      }
+      
     },
     close() {
       this.$emit('close');
@@ -199,14 +201,21 @@ export default {
       deadline: '',
       priority:'',
       date: '',
+      tasks2: []
     }
   },
   validations() {
     return {
       title: {
-        required, title_validation: {
-            $message: 'Invalid Name. Valid name only contain letters, dashes (-) and spaces'
-          } 
+        required, 
+        checkValidTitle(title){
+          this.tasks2.forEach(task => {
+            if(task.title === title) {
+              return false;
+            }
+          });
+          return true;
+        }
       },
       description: {
         required, description_validation: {
