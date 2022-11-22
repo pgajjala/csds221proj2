@@ -53,7 +53,7 @@
           <footer class="modal-footer">
             <div v-if = "isAddTask" key = "addButton">
               <button type="button" class="btn btn-block btn-primary" @click="submitTask">
-              <span class="fa-solid fa-circle-plus" ></span> Add
+               Add
               </button>
               <button type="button" class="btn btn-block btn-danger" @click="close">
               <span class="fa-solid fa-circle-xmark"></span> Cancel
@@ -164,11 +164,13 @@ export default {
   },
   methods: {
     submitTask(title, description, deadline, priority){
-      const[year, month, day] = this.deadline.split('-');
-        
-      this.$emit('submitTask',this.title, this.description, `${month}/${day}/${year}`, this.priority);
-      this.clear();
-      this.close();      
+      this.v$.$validate()
+      if(!this.v$.$error) {
+        const[year, month, day] = this.deadline.split('-');
+        this.$emit('submitTask',this.title, this.description, `${month}/${day}/${year}`, this.priority);
+        this.clear();
+        this.close(); 
+      } 
     },
     close() {
       this.$emit('close');
@@ -184,14 +186,6 @@ export default {
       this.$emit('editTask', this.description, `${month}/${day}/${year}`, this.priority);
       this.clear();
       this.close();
-    },
-    checkValidTitle(title){
-      this.tasks.forEach(task => {
-        if(task.title === this.title) {
-          return false;
-        }
-      });
-      return true;
     }
   },
   setup () {
