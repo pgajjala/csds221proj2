@@ -6,19 +6,25 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">
-              <span class="fa-solid fa-circle-plus" ></span>
-               Add Task
+              <div v-if="isAddTask" key = "addA">
+                <span class="fa-solid fa-circle-plus" ></span>
+                Add Task
+              </div>
+              <div v-else key = "updateA">
+                <span class="fa-solid fa-pen-to-square" ></span>
+                Edit Task
+              </div>
             </h5>
           </div>
           <section class="modal-body">
           <form>
-          <div class="form-group">
+          <div class="form-group" v-if= "isAddTask">
           <label for = "title" class="ms-2 position-absolute" style="margin-top: -0.60rem"> <span class="h7 small bg-white text-muted px-1">Title</span></label>
           <input type="text" class="form-control mt-3" id="title" ref="title" v-model = "title" placeholder = "Title"> </input>
           </div>
           <div class = "form-group">
           <label for = "description" class="ms-2 position-absolute" style="margin-top: -0.60rem"> <span class="h7 small bg-white text-muted px-1">Description</span></label>
-          <input type="text" class="form-control mt-3" id="description" placeholder = "Description" v-model= "v$.description.$model"></input>
+          <input type="text" class="form-control mt-3" id="description" placeholder = "Description" v-model= "description"></input>
           </div>
           <div class = "form-group">
           <label for = "deadline" class="ms-2 position-absolute" style="margin-top: -0.60rem"> <span class="h7 small bg-white text-muted px-1">Deadline</span></label>
@@ -39,12 +45,20 @@
           </section>
 
           <footer class="modal-footer">
-            <div>
-              <button type="button" class="btn btn-primary" @click="submitTask">
-                <span class="fa-solid fa-circle-plus"></span> Add
+            <div v-if = "isAddTask" key = "addButton">
+              <button type="button" class="btn btn-block btn-primary" @click="submitTask">
+              <span class="fa-solid fa-circle-plus"></span> Add
               </button>
-              <button type="button" class="btn btn-danger" @click="close">
-                <span class="fa-solid fa-circle-xmark"></span> Cancel
+              <button type="button" class="btn btn-block btn-danger" @click="close">
+              <span class="fa-solid fa-circle-xmark"></span> Cancel
+              </button>
+            </div>
+            <div v-else key = "updateButton">
+              <button type="button" class="btn btn-block btn-primary" @click="editTask">
+              <span class="fa-solid fa-pen-to-square"></span> Edit
+              </button>
+              <button type="button" class="btn btn-block btn-danger" @click="close">
+              <span class="fa-solid fa-circle-xmark"></span> Cancel
               </button>
             </div>
           </footer>
@@ -135,7 +149,8 @@ import { required, sameAs } from '@vuelidate/validators';
 export default {
   name: 'AddPopup',
   props: {
-    isAddModalVisible: Boolean,
+    isModalVisible: Boolean,
+    isAddTask: Boolean,
     tasks: Array
   },
   methods: {
@@ -154,6 +169,12 @@ export default {
       this.description = '';
       this.deadline = '';
       this.priority = 'low';
+    },
+    editTask(){
+      const[year, month, day] = this.deadline.split('-');
+      this.$emit('editTask', this.description, `${month}/${day}/${year}`, this.priority);
+      this.clear();
+      this.close();
     },
     checkValidTitle(title){
       this.tasks.forEach(task => {

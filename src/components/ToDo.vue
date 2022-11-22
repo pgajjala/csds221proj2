@@ -1,15 +1,16 @@
 <template>
   <AddPopup
-    v-show="isAddModalVisible"
+    v-show="isModalVisible"
+    :isModalVisible="isModalVisible"
+    :isAddTask="isAddTask"
     :existing_description="description"
     :existing_deadline="deadline"
     :existing_priority="priority"
     :tasks="tasks"
     @submitTask="submitTask"
-    @close="closeAddPopup"
+    @editTask="editTask"
+    @close="closePopup"
   />
-  <EditPopup v-show="isEditModalVisible" @close="closeEditPopup" />
-
   <div class="container-fluid">
     <div class="card">
       <div
@@ -20,7 +21,7 @@
         </div>
         <div class="col-sm-1">
           <button
-            @click="showAddModal"
+            @click="submitTaskPopup"
             type="button"
             class="btn btn-primary btn-sm"
           >
@@ -65,7 +66,7 @@
               <div
                 v-if="!tasks[index].isComplete"
                 class="text-center"
-                @click="showEditModal"
+                @click="editTaskPopup(index)"
               >
                 <button class="btn btn-primary btn-sm w-50">
                   <span class="fa fa-pen-to-square"></span>
@@ -88,7 +89,6 @@
 
 <script>
 import AddPopup from './AddPopup';
-import EditPopup from './EditPopup';
 export default {
   name: 'Todo',
   props: {
@@ -96,12 +96,11 @@ export default {
   },
   components: {
     AddPopup,
-    EditPopup,
   },
   data() {
     return {
-      isAddModalVisible: false,
-      isEditModalVisible: false,
+      isModalVisible: false,
+      isAddTask: true,
       title: '',
       description: '',
       deadline: '',
@@ -111,6 +110,18 @@ export default {
     };
   },
   methods: {
+    submitTaskPopup() {
+      this.isAddTask = true;
+      this.showPopup();
+    },
+    editTaskPopup(index) {
+      this.taskIndex = index;
+      this.isAddTask = false;
+      this.description = this.tasks[this.taskIndex].description;
+      this.deadline = this.tasks[this.taskIndex].deadline;
+      this.priority = this.tasks[this.taskIndex].priority;
+      this.showPopup();
+    },
     submitTask(title, description, deadline, priority) {
       this.tasks.push({
         title: title,
@@ -126,20 +137,16 @@ export default {
       this.$toast.error('Task successfully deleted');
     },
     editTask(index) {
-      this.task = this.tasks[index].title;
-      this.editedTask = index;
+      this.tasks[this.taskIndex].description = description;
+      this.tasks[this.taskIndex].deadline = deadline;
+      this.tasks[this.taskIndex].priority = priority;
+      this.$toast.warning('Task successfully edited');
     },
-    showAddModal() {
-      this.isAddModalVisible = true;
+    showPopup() {
+      this.isModalVisible = true;
     },
-    closeAddPopup() {
-      this.isAddModalVisible = false;
-    },
-    showEditModal() {
-      this.isEditModalVisible = true;
-    },
-    closeEditPopup() {
-      this.isEditModalVisible = false;
+    closePopup() {
+      this.isModalVisible = false;
     },
   },
 };
